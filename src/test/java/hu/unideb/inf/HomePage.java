@@ -45,6 +45,7 @@ public class HomePage {
        "Sauce Labs Fleece Jacket", By.id("add-to-cart-sauce-labs-fleece-jacket"),
        "Sauce Labs Onesie", By.id("add-to-cart-sauce-labs-onesie"),
        "Test.allTheThings() T-Shirt (Red)", By.id("add-to-cart-test.allthethings()-t-shirt-(red)")
+
     );
 
     private static final Map<String, By> navigationButtons = Map.of(
