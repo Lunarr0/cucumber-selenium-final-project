@@ -18,6 +18,17 @@ public class HomePage {
     private WebElement errorMessage;
     @FindBy(css = "#checkout_summary_container > div > div.summary_info > div.summary_total_label")
     private WebElement priceLabel;
+    @FindBy(css = "#inventory_item_container > div > div > div.inventory_details_desc_container > div.inventory_details_price")
+    private WebElement itemPriceLabel;
+
+    private static final Map<String , By> itemLinks = Map.of(
+            "Sauce Labs Backpack", By.id("item_4_title_link"),
+            "Sauce Labs Bike Light", By.id("item_0_title_link"),
+            "Sauce Labs Bolt T-Shirt", By.id("item_1_title_link"),
+            "Sauce Labs Fleece Jacket", By.id("item_5_title_link"),
+            "Sauce Labs Onesie", By.id("item_2_title_link"),
+            "Test.allTheThings() T-Shirt (Red)", By.id("item_3_title_link")
+    );
 
     private static final Map<String, By> textFields = Map.of(
        "Username", By.id("user-name"),
@@ -64,6 +75,10 @@ public class HomePage {
         driver.findElement(navigationButtons.get(button)).click();
     }
 
+    public void clickItemButton(String button){
+        driver.findElement(itemLinks.get(button)).click();
+    }
+
     public String getErrorMessage() {
         return errorMessage.getText();
     }
@@ -74,6 +89,10 @@ public class HomePage {
 
     public String getTotal() {
         return priceLabel.getText();
+    }
+
+    public String getPrice() {
+        return itemPriceLabel.getText();
     }
 
 }

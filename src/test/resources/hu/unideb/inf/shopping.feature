@@ -17,3 +17,16 @@ Feature: Saucedemo Shopping
       When the 'Continue' button is clicked
       Then the price should read 'Total: $49.66'
 
+
+    Scenario Outline: Checking item price
+        Given the '<item>' link is clicked
+        Then the '<price>' is displayed
+      Examples:
+        | item | price |
+        | Sauce Labs Backpack                 | $29.99|
+        | Sauce Labs Bike Light               | $9.99 |
+        | Sauce Labs Bolt T-Shirt             | $15.99|
+        | Sauce Labs Fleece Jacket            | $49.99|
+        | Sauce Labs Onesie                   | $7.99 |
+        | Test.allTheThings() T-Shirt (Red)   | $15.99|
+

@@ -16,4 +16,14 @@ public class ShoppingStepDefs extends AbstractStepDefs {
     public void thePriceShouldRead(String total) {
         assertEquals(total, homePage.getTotal());
     }
+
+    @Given("the {string} link is clicked")
+    public void theItemLinkIsClicked(String item) {
+        homePage.clickItemButton(item);
+    }
+
+    @Then("the {string} is displayed")
+    public void thePriceIsDisplayed(String price) {
+        assertEquals(price, homePage.getPrice());
+    }
 }
