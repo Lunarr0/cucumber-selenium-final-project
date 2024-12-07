@@ -3,10 +3,19 @@ package hu.unideb.inf;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import org.openqa.selenium.NoSuchElementException;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ShoppingStepDefs extends AbstractStepDefs {
+
 
     public ShoppingStepDefs(TestContext testContext) {
         super(testContext);
@@ -39,8 +48,18 @@ public class ShoppingStepDefs extends AbstractStepDefs {
     }
 
     @Then("the item should be sorted by price in {string}")
-    public void theItemShouldBeSortedByPriceInOrder(String price) {
-        homePage.selectSortingOrder(price);
+    public void theItemShouldBeSortedByPriceInOrder(String order) {
+
+        List<Double> prices = homePage.selectSortingOrder();
+        List<Double> sortedPrices = new ArrayList<>(prices);
+
+        // Check if prices are sorted in the expected order
+        if (order.equals("ascending")) {
+           Collections.sort(sortedPrices);
+        } else if (order.equals("descending")) {
+           sortedPrices.sort(Collections.reverseOrder());
+        }
+        assertEquals(sortedPrices, prices);
     }
 
     @Given("the user is on the homepage")
@@ -73,14 +92,29 @@ public class ShoppingStepDefs extends AbstractStepDefs {
         homePage.getItemCount();
     }
 
+
     @Then("the cart should be updated correctly")
     public void theCartShouldBeUpdatedCorrectly() {
-        homePage.emptyCart();
+        Optional<String> badgeText = homePage.emptyCart();
+
+        if (badgeText.isPresent()) {
+            // If the Optional contains a value, the cart is not empty
+            throw new AssertionError("Cart is not empty, badge text: " + badgeText.get());
+        } else {
+            // If the Optional is empty, the cart is empty
+            System.out.println("Cart is empty, no badge found.");
+        }
     }
 
     @Given("the cart is empty")
     public void theCartIsEmpty() {
-        homePage.emptyCart();
+
+        Optional<String> badgeText = homePage.emptyCart();
+
+        if (badgeText.isPresent()) {
+            throw new AssertionError("Cart is not empty. Badge text: " + badgeText.get());
+        }
+        System.out.println("Cart is confirmed to be empty.");
     }
 
     @Then("the {string} message is shown for checkout")
@@ -97,4 +131,34 @@ public class ShoppingStepDefs extends AbstractStepDefs {
     }
 
 
+    @When("the user selects {string} from the sorting options")
+    public void theUserSelectsFromTheSortingOptions(String options) {
+        homePage.selectSortingOption(options);
+    }
+
+    @Then("the items should be sorted in ascending order by name")
+    public void theItemsShouldBeSortedInAscendingOrderByName() {
+        //first get the list of items
+        List<String> itemNames = homePage.getItemNames();
+
+        //make a copy of the list and compare
+        List<String> sortedItemNames = new ArrayList<>(itemNames);
+        Collections.sort(sortedItemNames);
+
+        assertEquals(sortedItemNames, itemNames);
+    }
+
+    @Then("the items should be sorted in descending order by name")
+    public void theItemsShouldBeSortedInDescendingOrderByName() {
+
+        List<String> itemNames = homePage.getItemNames();
+
+
+        List<String> sortedItemNames = new ArrayList<>(itemNames);
+        sortedItemNames.sort(Collections.reverseOrder());
+
+        assertEquals(sortedItemNames, itemNames, "The items are not sorted in descending order by name");
+
+
+    }
 }

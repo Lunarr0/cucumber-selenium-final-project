@@ -12,6 +12,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,6 +36,8 @@ public class HomePage {
     private WebElement sortingDropdown;
     @FindBy (css = ".shopping_cart_badge")
     private  WebElement shoppingBadge;
+    @FindBy(css = ".inventory_item_name")
+    private List<WebElement> itemNames;
 
 
 
@@ -130,7 +133,7 @@ public class HomePage {
 
     public void addItemToCart(String item) {
         driver.findElement(itemButtons.get(item)).click();
-//
+
     }
 
     public String getTotal() {
@@ -144,36 +147,28 @@ public class HomePage {
     public void selectSortingOption(String sortingType) {
        sortingDropdown.click();
 
-        String optionValue = "";
-        if (sortingType.equalsIgnoreCase("Price (low to high)")) {
-            optionValue = "lohi";
-        } else if (sortingType.equalsIgnoreCase("Price (high to low)")) {
-            optionValue = "hilo";
-        }
-        driver.findElement(By.cssSelector(".product_sort_container option[value='" + optionValue.toLowerCase().replace(" ", "-") + "']")).click();
+        String optionValue = switch (sortingType.toLowerCase()) {
+            case "price (low to high)" -> "lohi";
+            case "price (high to low)" -> "hilo";
+            case "name (a to z)" -> "az";
+            case "name (z to a)" -> "za";
+            default -> throw new IllegalArgumentException("Invalid sorting option: " + sortingType);
+        };
+        driver.findElement(By.cssSelector(".product_sort_container option[value='" + optionValue.toLowerCase() + "']")).click();
     }
 
-    public void selectSortingOrder(String order) {
+
+    public List<Double> selectSortingOrder() {
         List<WebElement> prices = driver.findElements(By.cssSelector(".inventory_item_price"));
 
         // Create a list to store prices as integers
         List<Double> priceValues = new ArrayList<>();
         for (WebElement price : prices) {
-            // Extract and parse the price value
             String priceText = price.getText().replace("$", "");
             priceValues.add(Double.parseDouble(priceText));
         }
 
-        // Check if prices are sorted in the expected order
-        if (order.equals("ascending")) {
-            for (int i = 0; i < priceValues.size() - 1; i++) {
-                assertTrue(priceValues.get(i) <= priceValues.get(i + 1));  // Ensure prices are in ascending order
-            }
-        } else if (order.equals("descending")) {
-            for (int i = 0; i < priceValues.size() - 1; i++) {
-                assertTrue(priceValues.get(i) >= priceValues.get(i + 1));  // Ensure prices are in descending order
-            }
-        }
+       return priceValues;
     }
 
     public String getItemCount() {
@@ -187,24 +182,23 @@ public class HomePage {
         removeButton.click();
     }
 
-    public void emptyCart() {
+
+
+    public Optional<String> emptyCart() {
         try {
-            if (shoppingBadge.getText().isEmpty()){
-                System.out.println("Cart is Empty");
-            }else {
-                throw new AssertionError("Cart is not empty, badge text: " + shoppingBadge.getText());
-            }
+            // If the badge is present, return its text wrapped in an Optional
+            return Optional.of(shoppingBadge.getText());
         } catch (NoSuchElementException e) {
-            // If the shopping cart badge does not exist
-            System.out.println("Cart is empty, no badge found.");
+            // If the badge is not found, return an empty Optional
+            return Optional.empty();
         }
-        }
+    }
 
     public String getPageUrl() {
         return driver.getCurrentUrl();
     }
 
-    public void userIsRedirected(String url) {
+    public String userIsRedirected() {
 
         // Store the current window handle
         String originalWindow = driver.getWindowHandle();
@@ -214,20 +208,34 @@ public class HomePage {
                 .until(driver -> driver.getWindowHandles().size() > 1);
 
         // Switch to the new tab
+        String redirectedUrl = "";
         for (String windowHandle : driver.getWindowHandles()) {
             if (!windowHandle.equals(originalWindow)) {
                 driver.switchTo().window(windowHandle);
+                // Get the URL of the new tab
+                redirectedUrl = driver.getCurrentUrl();
+                // Close the new tab
+                driver.close();
                 break;
             }
         }
 
-        // Verify the URL of the new tab
-        String actualUrl = driver.getCurrentUrl();
-        assertEquals(actualUrl, url, "The redirected URL is incorrect");
 
-        // Close the new tab and switch back to the original tab
-        driver.close();
+
+       // switch back to the original tab
         driver.switchTo().window(originalWindow);
+
+        return redirectedUrl;
+
+    }
+
+
+    public List<String> getItemNames() {
+        List<String> names = new ArrayList<>();
+        for (WebElement item : itemNames) {
+            names.add(item.getText());
+        }
+        return names;
     }
 }
 

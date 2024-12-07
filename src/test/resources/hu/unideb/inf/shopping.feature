@@ -60,12 +60,19 @@ Feature: Saucedemo Shopping
       | Price (high to low) | descending      |
 
 
+  Scenario: Sort items by name
+    When the user selects "Name (A to Z)" from the sorting options
+    Then the items should be sorted in ascending order by name
 
+
+  Scenario: Sort items by name
+    When the user selects "Name (Z to A)" from the sorting options
+    Then the items should be sorted in descending order by name
 
 
   Scenario: An item is removed from the cart
     Given the cart is empty
-    And the user adds the 'Sauce Labs Backpack' to the cart
+    And  the 'Sauce Labs Backpack' is added to the cart
     When the 'Cart' button is clicked
     And the user clicks the 'Remove' button for the 'Sauce Labs Backpack'
     Then the cart should be updated correctly
@@ -99,12 +106,4 @@ Feature: Saucedemo Shopping
     Then the user is directed to 'https://saucelabs.com/'
 
 
-
-
-
-#  Scenario: An item is removed from the cart
-#    Given the user adds an 'Sauce Labs Backpack' to the cart
-#    When the 'Cart' button is clicked
-#    And the user clicks the 'Remove' button for the 'Sauce Labs Backpack'
-#    Then the cart count should be updated correctly
 
