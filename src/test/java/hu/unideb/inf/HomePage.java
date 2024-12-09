@@ -263,26 +263,6 @@ public class HomePage {
             button.click();
         }
 
-
-//        // Navigate to the cart page
-//        driver.get("https://www.saucedemo.com/cart.html");
-//
-//        // Wait for the cart items to load
-//        new WebDriverWait(driver, Duration.ofSeconds(10))
-//                .until(driver -> !driver.findElements(By.cssSelector(".cart_item")).isEmpty());
-//
-//        // Find and remove all items from the cart
-//        List<WebElement> removeButtons = driver.findElements(By.cssSelector(".cart_item .btn_secondary"));
-//        for (WebElement button : removeButtons) {
-//            button.click();
-//            // Optionally, wait for the item to be removed
-//            new WebDriverWait(driver, Duration.ofSeconds(2))
-//                    .until(driver -> button.isDisplayed() == false); // Wait until button is no longer displayed
-//        }
-//
-//        // Optionally, navigate back to the inventory page
-//        driver.get("https://www.saucedemo.com/inventory.html");
-//    }
     }
 }
 
