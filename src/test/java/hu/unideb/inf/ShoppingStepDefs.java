@@ -4,7 +4,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.openqa.selenium.NoSuchElementException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -95,7 +94,7 @@ public class ShoppingStepDefs extends AbstractStepDefs {
 
     @Then("the cart should be updated correctly")
     public void theCartShouldBeUpdatedCorrectly() {
-        Optional<String> badgeText = homePage.emptyCart();
+        Optional<String> badgeText = homePage.isCartEmpty();
 
         if (badgeText.isPresent()) {
             // If the Optional contains a value, the cart is not empty
@@ -109,7 +108,7 @@ public class ShoppingStepDefs extends AbstractStepDefs {
     @Given("the cart is empty")
     public void theCartIsEmpty() {
 
-        Optional<String> badgeText = homePage.emptyCart();
+        Optional<String> badgeText = homePage.isCartEmpty();
 
         if (badgeText.isPresent()) {
             throw new AssertionError("Cart is not empty. Badge text: " + badgeText.get());
@@ -160,5 +159,23 @@ public class ShoppingStepDefs extends AbstractStepDefs {
         assertEquals(sortedItemNames, itemNames, "The items are not sorted in descending order by name");
 
 
+    }
+
+    @Then("the {string} should remain in the cart")
+    public void theSauceLabsBackpackShouldRemainInTheCart(String itemName) {
+        assertTrue(homePage.isItemInCart(itemName), "The 'Sauce Labs Backpack' should remain in the cart.");
+        System.out.println(itemName);
+
+    }
+
+    @Then("the incorrect {string} is displayed")
+    public void theIncorrectItemIsDisplayed(String itemName) {
+        assertEquals(itemName, homePage.getDisplayedItemName());
+    }
+
+
+    @And("the cart should be cleared")
+    public void theCartShouldBeCleared() {
+        homePage.clearCart();
     }
 }

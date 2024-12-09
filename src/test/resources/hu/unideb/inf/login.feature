@@ -31,7 +31,7 @@ Feature: Saucedemo User Login
       | visual_user                    | secret_sauce   |
 
 
-  Scenario:
+  Scenario: user logs out
     Given the home page is opened
     And the 'Username' field is filled with 'standard_user'
     And the 'Password' field is filled with 'secret_sauce'
@@ -39,4 +39,5 @@ Feature: Saucedemo User Login
     When the 'BurgerIcon' button is clicked
     And the 'Logout' button is clicked
     Then the user is directed to 'https://www.saucedemo.com/'
+
 

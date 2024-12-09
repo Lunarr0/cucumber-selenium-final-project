@@ -81,7 +81,8 @@ public class HomePage {
             Map.entry("Logout", By.id("logout_sidebar_link")),
             Map.entry("Twitter", By.className("social_twitter")),
             Map.entry("Facebook", By.className("social_facebook")),
-            Map.entry("LinkedIn", By.className("social_linkedin"))
+            Map.entry("LinkedIn", By.className("social_linkedin")),
+            Map.entry("Reset App State", By.id("reset_sidebar_link"))
     );
 
 
@@ -128,6 +129,7 @@ public class HomePage {
     }
 
     public String getCheckOutErrorMessage() {
+
         return checkoutErrorMessage.getText();
     }
 
@@ -184,7 +186,7 @@ public class HomePage {
 
 
 
-    public Optional<String> emptyCart() {
+    public Optional<String> isCartEmpty() {
         try {
             // If the badge is present, return its text wrapped in an Optional
             return Optional.of(shoppingBadge.getText());
@@ -236,6 +238,51 @@ public class HomePage {
             names.add(item.getText());
         }
         return names;
+    }
+
+    public boolean isItemInCart(String itemName) {
+        try {
+            driver.findElement(removeButtons.get(itemName));
+            return true;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    public String getDisplayedItemName() {
+        return driver.findElement(By.cssSelector(".inventory_details_name")).getText();
+    }
+
+    public void clearCart() {
+        // Navigate to the cart page
+        driver.get("https://www.saucedemo.com/cart.html");
+
+        // Find and remove all items from the cart
+        List<WebElement> removeButtons = driver.findElements(By.cssSelector(".cart_item .btn_secondary"));
+        for (WebElement button : removeButtons) {
+            button.click();
+        }
+
+
+//        // Navigate to the cart page
+//        driver.get("https://www.saucedemo.com/cart.html");
+//
+//        // Wait for the cart items to load
+//        new WebDriverWait(driver, Duration.ofSeconds(10))
+//                .until(driver -> !driver.findElements(By.cssSelector(".cart_item")).isEmpty());
+//
+//        // Find and remove all items from the cart
+//        List<WebElement> removeButtons = driver.findElements(By.cssSelector(".cart_item .btn_secondary"));
+//        for (WebElement button : removeButtons) {
+//            button.click();
+//            // Optionally, wait for the item to be removed
+//            new WebDriverWait(driver, Duration.ofSeconds(2))
+//                    .until(driver -> button.isDisplayed() == false); // Wait until button is no longer displayed
+//        }
+//
+//        // Optionally, navigate back to the inventory page
+//        driver.get("https://www.saucedemo.com/inventory.html");
+//    }
     }
 }
 
